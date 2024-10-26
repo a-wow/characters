@@ -17,6 +17,13 @@ if (isset($_POST['search']) && !empty($_POST['search'])) {
     $sql = "SELECT * FROM characters WHERE name LIKE '%$searchTerm%'";
     $result = $conn->query($sql);
 }
+
+$lang = 'en';
+if (isset($_GET['lang']) && in_array($_GET['lang'], ['en', 'ru'])) {
+    $lang = $_GET['lang'];
+}
+
+$translations = include "lang/{$lang}.php";
 ?>
 
 <!DOCTYPE html>
@@ -119,10 +126,10 @@ if (isset($_POST['search']) && !empty($_POST['search'])) {
 </head>
 <body>
 
-<h1>Поиск персонажей</h1>
+<h1><?php echo $translations['search_characters']; ?></h1>
 <div class="search-container">
     <form method="POST" style="display: flex; width: 100%;">
-        <input type="text" name="search" placeholder="Введите имя персонажа" value="<?php echo htmlspecialchars($searchTerm); ?>">
+        <input type="text" name="search" placeholder="<?php echo $translations['enter_character_name']; ?>" value="<?php echo htmlspecialchars($searchTerm); ?>">
         <button type="submit"><i class="fas fa-search"></i></button>
     </form>
 </div>
@@ -131,21 +138,24 @@ if (isset($_POST['search']) && !empty($_POST['search'])) {
     <?php if ($result && $result->num_rows > 0): ?>
         <?php while($row = $result->fetch_assoc()): ?>
             <li onclick="showDetails(<?php echo $row['guid']; ?>)">
-                <?php echo htmlspecialchars($row['name']); ?> (Уровень: <?php echo $row['level']; ?>)
+                <?php echo htmlspecialchars($row['name']); ?> (<?php echo $translations['level']; ?>: <?php echo $row['level']; ?>)
             </li>
         <?php endwhile; ?>
     <?php elseif (isset($_POST['search'])): ?>
-        <li>Персонажи не найдены.</li>
+        <li><?php echo $translations['characters_not_found']; ?></li>
     <?php endif; ?>
 </ul>
-
+<div>
+    <a href="?lang=ru">Русский</a>
+    <a href="?lang=en">English</a>
+</div>
 <div id="character-details" class="character-details"></div>
 
 <script>
     function showDetails(guid) {
         const detailsDiv = document.getElementById('character-details');
         detailsDiv.style.display = 'block';
-        detailsDiv.innerHTML = 'Загрузка...';
+        detailsDiv.innerHTML = '<?php echo $translations['load_details']; ?>';
 
         fetch(`get_character_details.php?guid=${guid}`)
             .then(response => response.json())
@@ -178,23 +188,23 @@ if (isset($_POST['search']) && !empty($_POST['search'])) {
                             </div>
                         </div>
                     </div>
-                        <p>Деньги: ${data.money_formatted.gold} золота, ${data.money_formatted.silver} серебра, ${data.money_formatted.copper} меди</p>
-                        <p>Общее количество чести: ${data.totalHonorPoints}</p>
-                        <p>Очки арены: ${data.arenaPoints}</p>
-                        <p>Всего убийств: ${data.totalKills}</p>
-                        <p>Статус: ${data.online === 1 ? 'В сети' : 'Не в сети'}</p>
+                        <p><?php echo $translations['money']; ?> ${data.money_formatted.gold} золота, ${data.money_formatted.silver} серебра, ${data.money_formatted.copper} меди</p>
+                        <p><?php echo $translations['honor_points']; ?> ${data.totalHonorPoints}</p>
+                        <p><?php echo $translations['arena_points']; ?> ${data.arenaPoints}</p>
+                        <p><?php echo $translations['total_kills']; ?> ${data.totalKills}</p>
+                        <p><?php echo $translations['status']; ?> ${data.online === 1 ? '<?php echo $translations['online']; ?>' : '<?php echo $translations['offline']; ?>'}</p>
                         <div class="achievement">
                             <img src="/images/achievement.png" alt="Достижение" style="width: 25px; height: auto;">
                             <p style="margin-left: 5px;"> ${data.achievement_count}</p>
                         </div>
                     `;
                 } else {
-                    detailsDiv.innerHTML = 'Детали не найдены.';
+                    detailsDiv.innerHTML = '<?php echo $translations['no_details_found']; ?>';
                 }
             })
             .catch(err => {
                 console.error(err);
-                detailsDiv.innerHTML = 'Ошибка загрузки деталей.';
+                detailsDiv.innerHTML = '<?php echo $translations['error_loading_details']; ?>';
             });
     }
 </script>
