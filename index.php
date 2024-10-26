@@ -188,7 +188,7 @@ $translations = include "lang/{$lang}.php";
                             </div>
                         </div>
                     </div>
-                        <p><?php echo $translations['money']; ?> ${data.money_formatted.gold} золота, ${data.money_formatted.silver} серебра, ${data.money_formatted.copper} меди</p>
+                        <p><?php echo $translations['money']; ?> ${data.money_formatted.gold} <?php echo $translations['gold']; ?>, ${data.money_formatted.silver} <?php echo $translations['silver']; ?>, ${data.money_formatted.copper} <?php echo $translations['copper']; ?></p>
                         <p><?php echo $translations['honor_points']; ?> ${data.totalHonorPoints}</p>
                         <p><?php echo $translations['arena_points']; ?> ${data.arenaPoints}</p>
                         <p><?php echo $translations['total_kills']; ?> ${data.totalKills}</p>
