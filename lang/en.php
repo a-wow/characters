@@ -14,4 +14,7 @@ return [
     'online' => 'Online',
     'offline' => 'Offline',
     'level' => 'Level',
+    'gold' => 'Gold',
+    'silver' => 'Silver',
+    'copper' => 'Copper',
 ];
